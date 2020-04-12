@@ -46,6 +46,7 @@ morgan.token('data', function (req, res) {
 
 app.use(cors());
 app.disable('x-powered-by');
+app.use(express.static('build'));
 app.use(express.json());
 app.use(requestLogger);
 app.use(
