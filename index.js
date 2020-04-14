@@ -139,16 +139,16 @@ app.put('/api/persons/:id', (req, res, next) => {
     .catch(err => next(err));
 });
 
-app.post('/api/persons', (req, res) => {
+app.post('/api/persons', (req, res, next) => {
   const body = req.body;
 
   //const isNameExist = persons.find(p => p.name === body.name);
 
-  if (body.name === undefined || body.phone === undefined) {
-    return res.status(400).json({
-      error: 'bad request name or phone is missing!',
-    });
-  }
+  //   if (body.name === undefined || body.phone === undefined) {
+  //     return res.status(400).json({
+  //       error: 'bad request name or phone is missing!',
+  //     });
+  //   }
 
   const person = new Contact({
     name: body.name,
@@ -163,9 +163,12 @@ app.post('/api/persons', (req, res) => {
   //   } else {
   //     res.status(200).json(person);
   //   }
-  person.save().then(savedPerson => {
-    res.status(201).json(savedPerson.toJSON());
-  });
+  person
+    .save()
+    .then(savedPerson => {
+      res.status(201).json(savedPerson.toJSON());
+    })
+    .catch(error => next(error));
 });
 
 app.use(unknownEndpoint);
@@ -186,6 +189,8 @@ function errorHandler(err, req, res, next) {
 
   if (err.name === 'CastError' && err.kind === 'Objectid') {
     return res.status(400).send({ error: 'malformatted id' });
+  } else if (err.name === 'ValidationError') {
+    return res.status(400).json({ error: err.message });
   }
   next(err);
 }

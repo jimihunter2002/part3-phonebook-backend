@@ -11,8 +11,18 @@ mongoose
   .catch(err => console.log('error connecting to MongoDB', err.message));
 
 const contactSchema = new mongoose.Schema({
-  name: String,
-  phone: String,
+  // name: String,
+  // phone: String,
+  name: {
+    type: String,
+    minlength: 5,
+    required: true,
+  },
+  phone: {
+    type: String,
+    minlength: 10,
+    required: true,
+  },
 });
 
 //transform response from mongo
