@@ -1,12 +1,17 @@
 require('dotenv').config();
 const mongoose = require('mongoose');
+const uniqueValidator = require('mongoose-unique-validator');
 
 const url = process.env.MONGODB_URL;
 
 mongoose.set('useFindAndModify', false);
 
 mongoose
-  .connect(url, { useNewUrlParser: true, useUnifiedTopology: true })
+  .connect(url, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+    useCreateIndex: true,
+  })
   .then(() => console.log('connected to MongoDB'))
   .catch(err => console.log('error connecting to MongoDB', err.message));
 
@@ -22,8 +27,11 @@ const contactSchema = new mongoose.Schema({
     type: String,
     minlength: 10,
     required: true,
+    unique: true,
   },
 });
+
+contactSchema.plugin(uniqueValidator);
 
 //transform response from mongo
 contactSchema.set('toJSON', {
