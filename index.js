@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 require('dotenv').config();
 const express = require('express');
 const morgan = require('morgan');
@@ -43,7 +44,7 @@ console.log(`Server running on ${PORT}`);
 //   },
 // ];
 
-morgan.token('data', function (req, res) {
+morgan.token('data', function (req, _res) {
   return JSON.stringify(req.body);
 });
 
@@ -58,17 +59,17 @@ app.use(
   morgan(':method :url :status :response-time ms - :res[content-length] :data'),
 );
 
-app.get('/', (req, res) => {
+app.get('/', (_req, res) => {
   res.send('<h2>Shoko</h2>');
 });
 
-app.get('/api/persons', (req, res) => {
+app.get('/api/persons', (_req, res) => {
   Contact.find({}).then(contacts => {
     res.json(contacts.map(contact => contact.toJSON()));
   });
 });
 
-app.get('/info', async (req, res) => {
+app.get('/info', async (_req, res) => {
   //const info = persons.length;
   const contacts = await Contact.find({});
 
@@ -103,11 +104,11 @@ app.get('/api/persons/:id', (req, res, next) => {
 });
 
 app.delete('/api/persons/:id', (req, res, next) => {
-  const id = Number(req.params.id);
+  //const id = Number(req.params.id);
   //const person = persons.find(p => p.id === id);
   //const results = persons.filter(p => p.id !== id);
   Contact.findByIdAndRemove(req.params.id)
-    .then(result => {
+    .then(_result => {
       res.status(204).end();
     })
     .catch(err => next(err));
@@ -172,11 +173,11 @@ app.post('/api/persons', (req, res, next) => {
 });
 
 app.use(unknownEndpoint);
-function unknownEndpoint(req, res) {
+function unknownEndpoint(_req, res) {
   res.status(404).send({ error: 'unknown endpoint' });
 }
 app.use(errorHandler);
-function requestLogger(req, res, next) {
+function requestLogger(req, _res, next) {
   console.log('Method: ', req.method);
   console.log('Path: ', req.path);
   console.log('Body: ', req.body);
@@ -184,7 +185,7 @@ function requestLogger(req, res, next) {
   next();
 }
 
-function errorHandler(err, req, res, next) {
+function errorHandler(err, _req, res, next) {
   console.log(err.message);
 
   if (err.name === 'CastError' && err.kind === 'Objectid') {
